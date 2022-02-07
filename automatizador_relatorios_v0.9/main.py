@@ -5,7 +5,8 @@ from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, mm
 
-# Salvar as opções do usuario incremantadas nas listas
+
+# Salva as opções do usuário incremantadas nas listas
 qtd_bornes = lista_bornes_de_passagem = []
 qtd_capacitor = lista_capacitor_cilindrico = []
 qtd_disjuntor = lista_disjuntor = []
@@ -19,7 +20,7 @@ qtd_tampa_traseira = lista_tampa_traseira = []
 qtd_tampa_lateral = lista_tampa_lateral = []
 
 
-# Função pega a opção do usuario e trabalha nas condições incrementando nas listas
+# Função pega a opção do usuário e trabalha nas condições incrementando nas listas
 def input_usuario(evento=None):
     try:
         numero = int(escolha.get())
@@ -67,7 +68,7 @@ def input_usuario(evento=None):
                              "Favor digitar um número das opções!")
 
 
-# Função para gerar um arquivo em pdf
+# Função para gerar um arquivo em .pdf
 def gerar_pdf():
     try:
         dados_tabela = [
@@ -85,18 +86,25 @@ def gerar_pdf():
             ["11", "Tampa lateral", str(sum(qtd_tampa_lateral))],
         ]
 
-        # Estilos para os paragrafos
+        # Estilos para os parágrafos
         titulo_style = ParagraphStyle('Heading1', fontName='Helvetica-Bold',
-                                      fontSize=20, textColor=colors.black, leading=20, alignment=1, spaceAfter=30)
+                                      fontSize=14, textColor=colors.black, leading=20, alignment=1, spaceAfter=30)
 
         paragrafo_style = ParagraphStyle('Heading2', fontName='Helvetica',
-                                         fontSize=14, textColor=colors.black, leading=20, alignment=1, spaceAfter=15)
+                                         fontSize=12, textColor=colors.black, leading=20, alignment=1, spaceAfter=15)
 
-        # Paragrafos do pdf
+        paragrafo_final_style = ParagraphStyle('Heading3', fontName='Helvetica',
+                                               fontSize=8, textColor=colors.black, leading=20, alignment=1, spaceBefore=256)
+
+        # Parágrafos do pdf
         titulo = Paragraph(
             'Relatório - Relação de Envio Posterior', titulo_style)
-        paragrago1 = Paragraph(
+
+        paragrafo = Paragraph(
             'Segue abaixo relação de itens:', paragrafo_style)
+
+        paragrafo_final = Paragraph(
+            'Automatizador - Relação de Envio Posterior made by Luís Henrique Perna © 2022', paragrafo_final_style)
 
         # Tabela do pdf já com estilização
         tabela = Table(dados_tabela, [12*mm, 50*mm, 12*mm], 12*[10*mm])
@@ -106,20 +114,25 @@ def gerar_pdf():
             ('ALIGN', (1, 1), (1, -1), 'LEFT'),
             ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
             ('BOX', (0, 0), (-1, -1), 0.25, None),
-            ('BACKGROUND', (0, 0), (-1, 0), colors.lightgrey),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold')
+            ('BACKGROUND', (0, 0), (-1, 0), colors.green),
+            ('BACKGROUND', (0, 2), (-1, 2), colors.gainsboro),
+            ('BACKGROUND', (0, 4), (-1, 4), colors.gainsboro),
+            ('BACKGROUND', (0, 6), (-1, 6), colors.gainsboro),
+            ('BACKGROUND', (0, 8), (-1, 8), colors.gainsboro),
+            ('BACKGROUND', (0, 10), (-1, 10), colors.gainsboro),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white)
         ]))
 
-        # Cria o arquivo .pdf e construi a pagina
+        # Cria o arquivo .pdf e construí a página
         doc = SimpleDocTemplate("Relatório - Relação de Envio Posterior.pdf", pagesize=A4,
-                                rightMargin=10*mm, leftMargin=10*mm, topMargin=20*mm, bottonMargin=10*mm)
+                                rightMargin=10*mm, leftMargin=10*mm, topMargin=20*mm)
 
-        doc.build([titulo, paragrago1, tabela])
+        doc.build([titulo, paragrafo, tabela, paragrafo_final])
 
-        # Alteração no Label para confirmação ao usuario
+        # Alteração nos Label de confirmação ao usuário
         texto_confirmacao_emitido.config(text="Relatório emitido com sucesso!")
 
-        # Alteração no Label para confirmação ao usuario
         texto_retirar_na_pasta.config(
             text="Para pegá-lo favor acessar a pasta do programa")
 
@@ -128,7 +141,7 @@ def gerar_pdf():
                              "Favor fechar o relatório em pdf aberto para emitir o novo!")
 
 
-# Apenas para exibição na interface
+# Opções exibidas da interface
 opcoes = ["Bornes de passagem",
           "Capacitor cilíndrico",
           "Disjuntor",
@@ -142,34 +155,43 @@ opcoes = ["Bornes de passagem",
           "Tampa lateral"]
 
 
-# Criando Interface
-# home = Tk()
+# Cria a interface
 home = Tk()
-home.title('Automatizador - Envio Posterior de Itens')
+home.title('Automatizador - Relação de Envio Posterior v1.0')
 home.resizable(width=0, height=0)
 home.configure(bg="#F8F8FF")
+
+
+# Texto inicial do programa
+texto_inicial = Label(home, text='Automatizador de Relação de Envio Posterior')
+texto_inicial.configure(bg="#111111")
+texto_inicial.configure(fg="#DCDCDC")
+texto_inicial["font"] = ("Verdana", "12", "bold")
+texto_inicial.grid(column=0, row=0, ipady=10, sticky='ew')
+
 
 # Exibe texto informativo
 texto_orientacao = Label(
     home, text='Digite o número de uma das opções abaixo por vez no campo:')
 texto_orientacao.configure(bg="#F8F8FF")
-texto_orientacao["font"] = ("Verdana", "11",  "bold")
-texto_orientacao.grid(column=0, row=0, padx=100, pady=30)
+texto_orientacao["font"] = ("Verdana", "11", "bold")
+texto_orientacao.grid(column=0, row=1, padx=100, pady=30)
 
-# Trabalhando com a lista opcoes na interface
+
+# Trabalhando com a lista opcoes = [] na interface
 for item in opcoes:
     index_e_item = f'{opcoes.index(item) + 1} - {item}'
     textos_opcoes = Label(home, text=index_e_item)
     textos_opcoes.configure(bg="#F8F8FF")
     textos_opcoes["font"] = ("Verdana", "10")
-    textos_opcoes.grid(column=0, row=(opcoes.index(item) + 1))
+    textos_opcoes.grid(column=0, row=(opcoes.index(item) + 2))
 
 
 espacamento = Label(home, text='')
 espacamento.grid(column=0, row=13)
 
 
-# Cria input para o usuario escolher uma opção
+# Cria input para o usuário escolher uma opção
 escolha = Entry(home, width=20)
 escolha.configure(bg="#F5FFFA")
 escolha.grid(column=0, row=14)
@@ -177,9 +199,10 @@ escolha.grid(column=0, row=14)
 
 # Botão executa a função input_usuario()
 botao_input = Button(home, text='Enviar opção', command=input_usuario)
-botao_input.configure(bg="#DCDCDC")
-botao_input["font"] = ("Verdana", "10")
-botao_input.grid(column=0, row=15)
+botao_input.configure(bg="#111111")
+botao_input.configure(fg="#DCDCDC")
+botao_input["font"] = ("Verdana", "10", "bold")
+botao_input.grid(column=0, row=15, ipadx=8)
 
 
 # Exibe texto informativo
@@ -190,30 +213,39 @@ texto_emitir["font"] = ("Verdana", "10")
 texto_emitir.grid(column=0, row=16, pady=25)
 
 
-# Confirmação visual ao usuario da emissão do pdf
+# Confirmação visual ao usuário da emissão do pdf
 texto_confirmacao_emitido = Label(home, text='')
 texto_confirmacao_emitido.configure(bg="#F8F8FF")
 texto_confirmacao_emitido["font"] = ("Verdana", "9", "italic")
 texto_confirmacao_emitido.grid(column=0, row=17)
 
 
-# Confirmação visual ao usuario da emissão do pdf
+# Confirmação visual ao usuário da emissão do pdf
 texto_retirar_na_pasta = Label(home, text='')
 texto_retirar_na_pasta.configure(bg="#F8F8FF")
 texto_retirar_na_pasta["font"] = ("Verdana", "9", "italic")
 texto_retirar_na_pasta.grid(column=0, row=18)
 
 
-# Botão executa a função gerar_relatorio() importado de gerador_pdf.py
+# Botão executa a função gerar_pdf()
 botao_emitir = Button(home, text='EMITIR PDF', command=gerar_pdf)
-botao_emitir.configure(bg="#FF0000")
-botao_emitir.configure(fg="#FFFFFF")
-botao_emitir["font"] = ("Verdana", "10")
-botao_emitir.grid(column=0, row=19)
+botao_emitir.configure(bg="#111111")
+botao_emitir.configure(fg="#DCDCDC")
+botao_emitir["font"] = ("Verdana", "10", "bold")
+botao_emitir.grid(column=0, row=19, ipadx=14)
 
 
 espacamento2 = Label(home, text='')
-espacamento2.grid(column=0, row=20, pady=10)
+espacamento2.grid(column=0, row=20, pady=6)
+
+
+# Citando o desenvolverdor
+texto_credito = Label(
+    home, text='Automatizador - Relação de Envio Posterior made by Luís Henrique Perna © 2022')
+texto_credito.configure(bg="#111111")
+texto_credito.configure(fg="#DCDCDC")
+texto_credito["font"] = ("Verdana", "8")
+texto_credito.grid(column=0, row=21, sticky='ew')
 
 
 # Ao apertar Enter executa a função input_usuario()
