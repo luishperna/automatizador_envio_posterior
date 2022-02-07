@@ -4,6 +4,7 @@ from reportlab.platypus import Paragraph
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4, mm
+from datetime import datetime
 
 
 # Salva as opções do usuário incremantadas nas listas
@@ -86,6 +87,11 @@ def gerar_pdf():
             ["11", "Tampa lateral", str(sum(qtd_tampa_lateral))],
         ]
 
+        # Pegando a data e a hora atual para incrementar no arquivo .pdf
+        data_e_hora_atuais = datetime.now()
+        data_e_hora_em_texto = data_e_hora_atuais.strftime(
+            'Relatório emitido em %d/%m/%Y às %H:%M')
+
         # Estilos para os parágrafos
         titulo_style = ParagraphStyle('Heading1', fontName='Helvetica-Bold',
                                       fontSize=14, textColor=colors.black, leading=20, alignment=1, spaceAfter=30)
@@ -93,15 +99,21 @@ def gerar_pdf():
         paragrafo_style = ParagraphStyle('Heading2', fontName='Helvetica',
                                          fontSize=12, textColor=colors.black, leading=20, alignment=1, spaceAfter=15)
 
-        paragrafo_final_style = ParagraphStyle('Heading3', fontName='Helvetica',
-                                               fontSize=8, textColor=colors.black, leading=20, alignment=1, spaceBefore=256)
+        paragrafo_informacoes_style = ParagraphStyle('Heading3', fontName='Helvetica',
+                                                     fontSize=12, textColor=colors.black, leading=20, alignment=1, spaceBefore=236)
+
+        paragrafo_final_style = ParagraphStyle('Heading4', fontName='Helvetica',
+                                               fontSize=8, textColor=colors.black, leading=20, alignment=1)
 
         # Parágrafos do pdf
         titulo = Paragraph(
             'Relatório - Relação de Envio Posterior', titulo_style)
 
         paragrafo = Paragraph(
-            'Segue abaixo relação de itens:', paragrafo_style)
+            'Segue abaixo a relação dos itens para envio posterior:', paragrafo_style)
+
+        paragrafo_informacoes = Paragraph(
+            data_e_hora_em_texto, paragrafo_informacoes_style)
 
         paragrafo_final = Paragraph(
             'Automatizador - Relação de Envio Posterior made by Luís Henrique Perna © 2022', paragrafo_final_style)
@@ -128,7 +140,8 @@ def gerar_pdf():
         doc = SimpleDocTemplate("Relatório - Relação de Envio Posterior.pdf", pagesize=A4,
                                 rightMargin=10*mm, leftMargin=10*mm, topMargin=20*mm)
 
-        doc.build([titulo, paragrafo, tabela, paragrafo_final])
+        doc.build([titulo, paragrafo, tabela,
+                  paragrafo_informacoes, paragrafo_final])
 
         # Alteração nos Label de confirmação ao usuário
         texto_confirmacao_emitido.config(text="Relatório emitido com sucesso!")
@@ -157,7 +170,7 @@ opcoes = ["Bornes de passagem",
 
 # Cria a interface
 home = Tk()
-home.title('Automatizador - Relação de Envio Posterior v1.0')
+home.title('Automatizador - Relação de Envio Posterior v0.9')
 home.resizable(width=0, height=0)
 home.configure(bg="#F8F8FF")
 
@@ -239,7 +252,7 @@ espacamento2 = Label(home, text='')
 espacamento2.grid(column=0, row=20, pady=6)
 
 
-# Citando o desenvolverdor
+# Citando o desenvolvedor
 texto_credito = Label(
     home, text='Automatizador - Relação de Envio Posterior made by Luís Henrique Perna © 2022')
 texto_credito.configure(bg="#111111")
